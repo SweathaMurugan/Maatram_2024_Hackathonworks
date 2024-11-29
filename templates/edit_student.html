@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Student Details</h1>
+
+        <form action="/update/{{ student['student_id'] }}" method="POST">
+            <div class="form-group">
+                <label for="student_id"><strong>Student ID:</strong></label>
+                <input type="text" id="student_id" name="student_id" value="{{ student['student_id'] }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="name"><strong>Name:</strong></label>
+                <input type="text" id="name" name="name" value="{{ student['name'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="college_name"><strong>College Name:</strong></label>
+                <input type="text" id="college_name" name="college_name" value="{{ student['college_name'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="dob"><strong>Date of Birth:</strong></label>
+                <input type="text" id="dob" name="dob" value="{{ student['dob'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email"><strong>Email:</strong></label>
+                <input type="email" id="email" name="email" value="{{ student['email'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="phone"><strong>Phone:</strong></label>
+                <input type="text" id="phone" name="phone" value="{{ student['phone'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="photo"><strong>Upload Photo:</strong></label>
+                <input type="file" id="photo" name="photo" accept="image/*">
+            <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+
+        <a href="/student_details/{{ student['student_id'] }}" class="back-btn">Back to Student Details</a>
+    </div>
+</body>
+</html>

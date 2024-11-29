@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Student Details</h2>
+          <!-- Display the student photo -->
+        <div class="photo">
+            <img src="{{ url_for('static', filename=student['photo_url']) }}" alt="{{ student['name'] }}'s Photo" class="student-photo">
+        </div>
+        <div class="details">
+            <p><strong>Student ID:</strong> {{ student['student_id'] }}</p>
+            <p><strong>Name:</strong> {{ student['name'] }}</p>
+            <p><strong>Date of Birth:</strong> {{ student['dob'] }}</p>
+            <p><strong>College Name:</strong> {{ student['college_name'] }}</p>
+            <p><strong>Batch:</strong> {{ student['batch'] }}</p>
+            <p><strong>Email:</strong> {{ student['email'] }}</p>
+            <p><strong>Attendance:</strong> {{ student['attendance'] }}</p>
+            <p><strong>CGPA:</strong> {{ student['cgp'] }}</p>
+            <p><strong>Phone:</strong> {{ student['phone'] }}</p>
+        </div>
+        <div class="actions">
+            <a href="/update/{{ student['student_id'] }}" class="btn">Edit Details</a>
+            <a href="/" class="btn">Go back to Login</a>
+        </div>
+    </div>
+</body>
+</html>
+
