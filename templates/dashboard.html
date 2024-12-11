@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Welcome to the Dashboard</h2>
+        <p>Role: {{ role }}</p>
+        <a href="/logout" class="btn btn-danger">Logout</a>
+        <li><a href="{{ url_for('student_attendance') }}">Attendance</a></li>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Meeting</title>
+</head>
+<body>
+    <h1>Schedule a Meeting</h1>
+    <form method="POST" action="{{ url_for('add_meeting') }}">
+        <label for="topic">Meeting Topic:</label>
+        <input type="text" name="topic" id="topic" required>
+        <br>
+        <label for="date">Date:</label>
+        <input type="date" name="date" id="date" required>
+        <br>
+        <button type="submit">Add Meeting</button>
+    </form>
+</body>
+</html>

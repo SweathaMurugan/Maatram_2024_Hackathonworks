@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ session['user_id'] }}</h1>
+    <ul>
+        <li><a href="{{ url_for('edit_student_profile') }}">Edit Profile</a></li>
+        <li><a href="{{ url_for('upload_certificate') }}">Upload Certificate</a></li>
+        <li><a href="{{ url_for('search_certificates') }}">Search Certificates</a></li>
+        <li><a href="{{ url_for('student_attendance') }}">Attendance</a></li>
+    </ul>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>

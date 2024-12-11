@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Certificates</title>
+</head>
+<body>
+    <h1>Search Certificates</h1>
+    <table border="1">
+        <tr>
+            <th>Certificate Name</th>
+            <th>File</th>
+            <th>Action</th>
+        </tr>
+        {% for certificate in certificates %}
+        <tr>
+            <td>{{ certificate['certificate_name'] }}</td>
+            <td><a href="{{ url_for('static', filename='uploads/' + certificate['filename']) }}" target="_blank">View</a></td>
+            <td>
+                <form method="POST" action="{{ url_for('delete_certificate', certificate_id=certificate['_id']) }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

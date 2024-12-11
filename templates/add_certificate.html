@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Certificate</title>
+</head>
+<body>
+    <h1>Add Certificate</h1>
+    <form method="POST" action="{{ url_for('add_certificate') }}">
+        <label for="student_id">Student ID:</label>
+        <input type="number" name="student_id" id="student_id" required>
+        <br>
+        <label for="certificate_name">Certificate Name:</label>
+        <input type="text" name="certificate_name" id="certificate_name" required>
+        <br>
+        <button type="submit">Add Certificate</button>
+    </form>
+</body>
+</html>

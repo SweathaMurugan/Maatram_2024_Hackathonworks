@@ -3,30 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Student Details</title>
+    <title>Edit Profile</title>
 </head>
 <body>
-    <h1>Edit Student Details</h1>
-    <form action="/update/{{ student.student_id }}" method="POST" enctype="multipart/form-data">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="{{ student.name }}" required><br><br>
-
-        <label for="college_name">College Name:</label>
-        <input type="text" id="college_name" name="college_name" value="{{ student.college_name }}" required><br><br>
-
-        <label for="dob">Date of Birth:</label>
-        <input type="date" id="dob" name="dob" value="{{ student.dob }}" required><br><br>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="{{ student.email }}" required><br><br>
-
-        <label for="phone">Phone:</label>
-        <input type="text" id="phone" name="phone" value="{{ student.phone }}" required><br><br>
-
-        <label for="photo">Upload Photo:</label>
-        <input type="file" id="photo" name="photo"><br><br>
-
-        <input type="submit" value="Update Details">
+    <h1>Edit Profile</h1>
+    <form method="POST">
+        <label>Name:</label>
+        <input type="text" name="name" required><br>
+        <label>Date of Birth:</label>
+        <input type="date" name="dob" required><br>
+        <label>College:</label>
+        <input type="text" name="college" required><br>
+        <label>Batch:</label>
+        <input type="text" name="batch" required><br>
+        <label>Phone:</label>
+        <input type="text" name="phone" required><br>
+        <button type="submit">Update</button>
     </form>
 </body>
 </html>
