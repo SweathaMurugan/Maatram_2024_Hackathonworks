@@ -6,11 +6,36 @@
     <title>Upload Attendance</title>
     <!-- Bootstrap 5 CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #fffccd;
+        }
+        /* Body Background and General Styling */
+        .container {
+            box-shadow: 0 6px 10px rgb(255, 255, 0); /* Yellow Box Shadow */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        /* Button Styling */
+        .btn-yellow {
+            background-color: yellow;
+            border: 1px solid yellow;
+            box-shadow: 0 4px 8px rgba(255, 255, 0, 0.3); /* Yellow box-shadow */
+        }
+
+        .btn-yellow:hover {
+            background-color: #fffccd;
+            color: black;
+            border-color: black;
+            box-shadow: 0 4px 8px rgba(255, 255, 0, 0.5); /* Yellow box-shadow on hover */
+        }
+
+    </style>
 </head>
 <body>
 
 <div class="container mt-5">
-    <h1>Upload Attendance</h1>
 
     <!-- Display Success or Error Messages -->
     {% if success_message %}
@@ -25,14 +50,15 @@
     {% endif %}
 
     <!-- Attendance Upload Form -->
-    <form method="POST" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="attendance_file" class="form-label">Select Attendance File</label>
-            <input type="file" class="form-control" id="attendance_file" name="attendance_file" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Upload</button>
-    </form>
-
+    <h2 class="text-center">Upload Zoom Attendance</h2>
+        <form action="{{ url_for('upload_attendance') }}" method="POST" enctype="multipart/form-data" class="mb-4">
+            <div class="mb-3">
+                <label for="attendance_file" class="form-label">Choose Excel File:</label>
+                <input type="file" name="attendance_file" id="attendance_file" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-yellow">Upload</button>
+        </form>
+    </section>
 </div>
 
 <!-- Bootstrap 5 JavaScript (Optional) -->

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +14,6 @@
 
         .container {
             background-color: #fffccd;
-            
             padding: 20px;
             border-radius: 8px;
             position: relative; /* Allow absolute positioning of profile photo */
@@ -36,28 +36,38 @@
         }
 
         .certificate-gallery {
-    display: flex;
-    overflow-x: auto;
-    gap: 16px; /* Space between certificates */
-    padding: 10px; /* Optional padding */
-    scroll-behavior: smooth; /* Enables smooth scrolling */
-}
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            padding: 10px;
+            scroll-behavior: smooth;
+             /* Centering the certificates */
+            margin-top: 20px; /* Add some space at the top */
+        }
 
-.certificate-item {
-    min-width: 150px; /* Adjusted minimum width for smaller items */
-    flex: 0 0 auto; /* Prevents the items from shrinking or growing */
-    text-align: center; /* Center-align content within the item */
-}
 
-.certificate-item img {
-    max-width: 120px; /* Set a smaller maximum width for the image */
-    max-height: 120px; /* Constrain the height as well */
-    height: auto; /* Maintain aspect ratio */
-    border: 1px solid #ddd; /* Optional border styling */
-    border-radius: 4px; /* Optional rounded corners */
-    object-fit: cover; /* Ensures the image fills its container nicely */
-}
+        .certificate-item {
+            min-width: 200px; /* Adjusted minimum width for smaller items */
+            flex: 0 0 auto;
+            text-align: center;
+        }
 
+        .certificate-item img {
+            width: 100%; /* Ensure the image fills the card width */
+            max-height: 150px; /* Limit the height of the image */
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto; /* Center the image */
+            cursor: pointer;
+        }
+
+
+        .card-body {
+            padding: 10px;
+            text-align: center;
+        }
 
         h1, h2, h3 {
             text-align: center;
@@ -133,9 +143,12 @@
             <div class="certificate-gallery">
                 {% for certificate in certificates %}
                     <div class="certificate-item">
-                        <h4>{{ certificate['title'] }}</h4>
-                        <img src="{{ url_for('get_certificate', file_id=certificate['file_id']) }}" alt="Certificate" class="img-fluid" title="{{ certificate.name }}">
-                        <p class="mt-2"><strong>{{ certificate.name }}</strong></p>
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{ url_for('get_certificate', file_id=certificate['file_id']) }}" alt="Certificate" class="img-fluid" title="{{ certificate.name }}" data-bs-toggle="modal" data-bs-target="#certificateModal{{ certificate['_id'] }}">
+                            <div class="card-body">
+                                <h5 class="card-text">{{ certificate.title }}</h5>
+                            </div>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
@@ -194,7 +207,49 @@
         {% else %}
             <p class="text-center text-muted">No attendance records found.</p>
         {% endif %}
+        <div class="section-title">
+            <h2>Your Marks</h2>
+            {% if marks_records %}
+            <table class="table table-striped ">
+                <thead>
+                    <tr>
+                        <th>Test Name</th>
+                        <th>Date</th>
+                        <th>Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mark in marks_records %}
+                    <tr>
+                        <td>{{ mark.test_name }}</td>
+                        <td>{{ mark.test_date }}</td>
+                        <td>{{ mark.marks }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {% else %}
+            <p>No marks available for you at the moment.</p>
+            {% endif %}
+        </div>
     </div>
+    {% for certificate in certificates %}
+        <div class="modal fade" id="certificateModal{{ certificate['_id'] }}" tabindex="-1" aria-labelledby="certificateModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="certificateModalLabel">{{ certificate.title }}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="{{ url_for('get_certificate', file_id=certificate['file_id']) }}" class="img-fluid" alt="Certificate Full View">
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    
 
     <!-- Bootstrap 5 JavaScript (Optional) -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

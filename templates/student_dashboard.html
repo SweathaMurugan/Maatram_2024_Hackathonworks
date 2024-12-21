@@ -12,51 +12,51 @@
         }
 
         .certificate-gallery {
-           display: flex;
-           overflow-x: auto;
-           gap: 16px; /* Space between certificates */
-           padding: 10px; /* Optional padding */
-           scroll-behavior: smooth; /* Enables smooth scrolling */
-        } 
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            padding: 10px;
+            scroll-behavior: smooth;
+             /* Centering the certificates */
+            margin-top: 20px; /* Add some space at the top */
+        }
 
         .certificate-item {
-           min-width: 200px; /* Set a minimum width for each certificate item */
-           flex: 0 0 auto; /* Prevents the items from shrinking or growing */
-           text-align: center; /* Center-align content within the item */
+            min-width: 200px;
+            flex: 0 0 auto;
+            text-align: center;
         }
 
         .certificate-item img {
-           max-width: 120px; /* Set a smaller maximum width for the image */
-           max-height: 120px; /* Constrain the height as well */
-           height: auto; /* Maintain aspect ratio */
-           border: 1px solid #ddd; /* Optional border styling */
-           border-radius: 4px; /* Optional rounded corners */
-           object-fit: cover; /* Ensures the image fills its container nicely */
-         }
+            width: 100%; /* Ensure the image fills the card width */
+            max-height: 150px; /* Limit the height of the image */
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto; /* Center the image */
+            cursor: pointer;
+        }
 
-        
-
-        /* Update button to yellow */
         .btn-yellow {
             background-color: yellow;
             border-color: yellow;
-           
         }
+
         .btn-yellow:hover {
             color: black;
             border-color: black;
             background-color: transparent;
         }
 
-        /* Table Styling with Light Yellow Striping */
         .table-striped tbody tr:nth-child(odd) {
-            background-color: #fff8e1; /* Light Yellow */
+            background-color: #fff8e1; 
         }
+
         .table th, .table td {
             vertical-align: middle;
         }
 
-        /* Notifications as cards */
         .notification-card {
             background-color: #fff;
             border: 1px solid #ddd;
@@ -72,9 +72,21 @@
             max-width: 150px;
             border-radius: 10px;
         }
-        
+
         h1, h2, h3 {
             text-align: center;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .section-title {
+            margin-top: 40px;
+        }
+
+        .btn-danger {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -83,100 +95,115 @@
 <div class="container mt-5">
     
     {% if student.get('photo_path') %}
-            <img src="{{ url_for('get_photo', photo_id=student.photo_id) }}" alt="Student Photo" class="profile-photo img-fluid">
-        {% else %}
-            <p class="text-center">No photo uploaded.</p>
-        {% endif %}
-
-        <h1>Welcome, {{ student['name'] }}</h1>
-
-        <br><br><br><br><br>
-    
-    <!-- Display additional details in table format -->
-    <h3>Your Details</h3>
-    <table class="table table-striped">
-        <tbody>
-            <tr><th>Mentor Name</th><td>{{ student.mentor_name }}</td></tr>
-            <tr><th>Anchor Name</th><td>{{ student.anchor_name }}</td></tr>
-            <tr><th>Father's Name</th><td>{{ student.father_name }}</td></tr>
-            <tr><th>Mother's Name</th><td>{{ student.mother_name }}</td></tr>
-            <tr><th>Address</th><td>{{ student.address }}</td></tr>
-            <tr><th>Date of Birth</th><td>{{ student.date_of_birth }}</td></tr>
-            <tr><th>College Name</th><td>{{ student.college_name }}</td></tr>
-            <tr><th>CGPA</th><td>{{ student.cgpa }}</td></tr>
-            <tr><th>Batch</th><td>{{ student.batch }}</td></tr>
-        </tbody>
-    </table>
-
-    
-
-    <!-- Edit button that redirects to the edit page -->
-    <a href="{{ url_for('edit_student', student_id=student['_id']) }}" class="btn btn-yellow mt-3">Edit Your Details</a>
-
-    <!-- Section for Displaying Certificates -->
-    <h2 class="mt-5">Your Certificates</h2>
-    {% if certificates %}
-        <div class="certificate-gallery">
-            {% for certificate in certificates %}
-                <div class="certificate-item">
-                    <h4>{{ certificate['title'] }}</h4>
-                    <img src="{{ url_for('get_certificate', file_id=certificate['file_id']) }}" alt="Certificate" class="img-fluid">
-                    <form action="{{ url_for('delete_certificate', cert_id=certificate['_id']) }}" method="POST">
-                        <button type="submit" class="btn btn-danger btn-sm mt-2">Delete</button>
-                    </form>
-                </div>
-            {% endfor %}
-        </div>
+        <img src="{{ url_for('get_photo', photo_id=student.photo_id) }}" alt="Student Photo" class="profile-photo img-fluid">
     {% else %}
-        <p>No certificates uploaded yet.</p>
+        <p class="text-center">No photo uploaded.</p>
     {% endif %}
 
-    <!-- Certificate Upload Section with Yellow Button -->
-    <a href="{{ url_for('upload_certificate') }}" class="btn btn-yellow mt-3">Upload Certificate</a>
+    <h1>Welcome, {{ student['name'] }}</h1>
 
-    <!-- Display Meetings Section -->
-    <h2 class="mt-5">Upcoming Meetings</h2>
-    {% if meetings %}
-        <table class="table table-striped mt-3">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>ID</th>
-                    <th>Passcode</th>
-                    <th>Date</th>
-                    <th>Zoom Link</th>
-                </tr>
-            </thead>
+    <div class="section-title">
+        <h3>Your Details</h3>
+        <table class="table table-striped">
             <tbody>
-                {% for meeting in meetings %}
-                    <tr>
-                        <td>{{ meeting.title }}</td>
-                        <td>{{ meeting._id }}</td>
-                        <td>
-                            {% if meeting.zoom_passcode %}
-                                {{ meeting.zoom_passcode }}
-                            {% else %}
-                                <span class="text-muted">No passcode</span>
-                            {% endif %}
-                        </td>    
-                        <td>{{ meeting.date }}</td>
-                        <td>
-                            {% if meeting.zoom_link %}
-                                <a href="{{ meeting.zoom_link }}" target="_blank" class="btn btn-info btn-sm">Join Zoom</a>
-                            {% else %}
-                                <span class="text-muted">No Zoom link</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
+                <tr><th>Mentor Name</th><td>{{ student.mentor_name }}</td></tr>
+                <tr><th>Anchor Name</th><td>{{ student.anchor_name }}</td></tr>
+                <tr><th>Father's Name</th><td>{{ student.father_name }}</td></tr>
+                <tr><th>Mother's Name</th><td>{{ student.mother_name }}</td></tr>
+                <tr><th>Address</th><td>{{ student.address }}</td></tr>
+                <tr><th>Date of Birth</th><td>{{ student.date_of_birth }}</td></tr>
+                <tr><th>College Name</th><td>{{ student.college_name }}</td></tr>
+                <tr><th>CGPA</th><td>{{ student.cgpa }}</td></tr>
+                <tr><th>Batch</th><td>{{ student.batch }}</td></tr>
             </tbody>
         </table>
-    {% else %}
-        <p class="text-muted">No upcoming meetings available.</p>
-    {% endif %}
+        <a href="{{ url_for('edit_student', student_id=student['_id']) }}" class="btn btn-yellow mt-3">Edit Your Details</a>
+    </div>
 
-    <!-- Volunteer Details Section -->
-    <h3 class="mt-5">Your Volunteer Details</h3>
+    <div class="section-title">
+        <h2>Your Certificates</h2>
+        {% if certificates %}
+            <div class="certificate-gallery">
+                {% for certificate in certificates %}
+                    <div class="certificate-item">
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{ url_for('get_certificate', file_id=certificate['file_id']) }}" alt="Certificate" class="card-img-top img-fluid" title="{{ certificate.name }}" data-bs-toggle="modal" data-bs-target="#certificateModal{{ certificate['_id'] }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ certificate.title }}</h5>
+                                <form action="{{ url_for('delete_certificate', cert_id=certificate['_id']) }}" method="POST">
+                                    <button type="submit" class="btn btn-danger btn-sm mt-2">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No certificates uploaded yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Modal to View Certificate Full Screen -->
+    {% for certificate in certificates %}
+    <div class="modal fade" id="certificateModal{{ certificate['_id'] }}" tabindex="-1" aria-labelledby="certificateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="certificateModalLabel">{{ certificate.title }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="{{ url_for('get_certificate', file_id=certificate['file_id']) }}" class="img-fluid" alt="Certificate Full View" style="max-height: 90vh; width: auto;">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <a href="{{ url_for('upload_certificate') }}" class="btn btn-yellow mt-3">Upload Certificate</a>
+
+    <div class="section-title">
+        <h2>Upcoming Meetings</h2>
+        {% if meetings %}
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>ID</th>
+                        <th>Passcode</th>
+                        <th>Date</th>
+                        <th>Zoom Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for meeting in meetings %}
+                        <tr>
+                            <td>{{ meeting.title }}</td>
+                            <td>{{ meeting._id }}</td>
+                            <td>
+                                {% if meeting.zoom_passcode %}
+                                    {{ meeting.zoom_passcode }}
+                                {% else %}
+                                    <span class="text-muted">No passcode</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ meeting.date }}</td>
+                            <td>
+                                {% if meeting.zoom_link %}
+                                    <a href="{{ meeting.zoom_link }}" target="_blank" class="btn btn-info btn-sm">Join Zoom</a>
+                                {% else %}
+                                    <span class="text-muted">No Zoom link</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-muted">No upcoming meetings available.</p>
+        {% endif %}
+    </div>
+    <h3 class="mt-5">Volunteer Details</h3>
     {% if volunteer_details %}
         <table class="table table-striped">
             <thead>
@@ -185,7 +212,6 @@
                     <th>Description</th>
                     <th>Hours Worked</th>
                     <th>Date Uploaded</th>
-                    
                 </tr>
             </thead>
             <tbody>
@@ -195,35 +221,16 @@
                         <td>{{ detail.description }}</td>
                         <td>{{ detail.hours_worked }}</td>
                         <td>{{ detail.date_uploaded.strftime('%Y-%m-%d') }}</td>
-                        
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>No volunteer details found.</p>
+        <p class="text-center">No volunteer details found.</p>
     {% endif %}
-    <!-- Add Volunteer Work Button -->
-    <a href="{{ url_for('add_volunteer') }}" class="btn btn-yellow mt-3">Add Volunteer Work</a>
 
-    <!-- Display Notifications Section -->
-    <section class="mt-5">
-        <h2>Notifications</h2>
-        <div class="notification-card">
-            {% for notification in notifications %}
-                <h5><strong>{{ notification.title }}</strong></h5>
-                <p>{{ notification.message }}</p>
-                <small>{{ notification.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</small><br>
-                {% if notification.google_form_link %}
-                    <a href="{{ notification.google_form_link }}" class="btn btn-info btn-sm mt-2" target="_blank">Open Google Form</a>
-                {% endif %}
-                <hr>
-            {% endfor %}
-        </div>
-    </section>
-
-    <!-- Attendance Records -->
-    <h2 class="mt-5">Your Attendance</h2>
+    <!-- Attendance Records Section -->
+    <h2 class="mt-5">Attendance</h2>
     {% if attendance_records %}
         <table class="table table-striped">
             <thead>
@@ -236,25 +243,49 @@
             <tbody>
                 {% for record in attendance_records %}
                     <tr>
-                        <td>{{ record.Date }}</td>
-                        <td>{{ record.Duration }}</td>
-                        <td>{{ record.Status }}</td>
+                        <td>{{ record.Date or 'N/A' }}</td>
+                        <td>{{ record.Duration or '0 hours' }}</td>
+                        <td>{{ record.Status or 'N/A' }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p class="text-muted">No attendance records found.</p>
+        <p class="text-center text-muted">No attendance records found.</p>
     {% endif %}
+    <div class="section-title">
+        <h2>Your Marks</h2>
+        {% if marks_records %}
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th>Test Name</th>
+                    <th>Date</th>
+                    <th>Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mark in marks_records %}
+                <tr>
+                    <td>{{ mark.test_name }}</td>
+                    <td>{{ mark.test_date }}</td>
+                    <td>{{ mark.marks }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        {% else %}
+        <p>No marks available for you at the moment.</p>
+        {% endif %}
+    </div>
 
-    <!-- Logout Button -->
-    <br>
     <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
 </div>
 
 <!-- Bootstrap 5 JavaScript (Optional) -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

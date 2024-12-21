@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,16 +75,9 @@
 
     
     <!-- Upload Zoom Attendance Section -->
-    <section>
-        <h2>Upload Zoom Attendance</h2>
-        <form action="{{ url_for('upload_attendance') }}" method="POST" enctype="multipart/form-data" class="mb-4">
-            <div class="mb-3">
-                <label for="attendance_file" class="form-label">Choose Excel File:</label>
-                <input type="file" name="attendance_file" id="attendance_file" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-yellow">Upload</button>
-        </form>
-    </section>
+    <a href="{{ url_for('upload_attendance') }}" class="btn btn-yellow px-4 mx-5">Upload Attendance</a>
+    <a href="{{ url_for('upload_marksheet_page') }}" class="btn btn-yellow px-4 mx-5">Upload Marksheet</a>
+
 
     <!-- Search Students Section -->
     <section class="mt-4">
@@ -108,6 +102,8 @@
             </div>
         </form>
     </section>
+
+
 
     <!-- Students Table Section -->
 <section class="mt-5">
@@ -143,6 +139,8 @@
         <p class="text-muted">No students found.</p>
     {% endif %}
 </section>
+<br>
+
 
 
     <!-- Create Notification Section -->
