@@ -83,17 +83,6 @@
                 <div class="mb-3">
                     <label for="batch" class="form-label">Batch:</label>
                     <input type="text" name="batch" id="batch" class="form-control" value="{{ student.batch }}" required>
-                </div>
-                <label for="profile_image">Change Profile Picture:</label>
-                <input type="file" name="profile_image" >
-                 <!-- Photo Upload -->
-                 <div class="mb-3">
-                    <label for="photo" class="form-label">Profile Photo:</label>
-                    <input type="file" name="photo" id="photo" class="form-control">
-                    {% if student.photo_path %}
-                        <img src="{{ url_for('static', filename=student['photo_path']) }}"  alt="Student Photo" class="img-fluid mt-2" style="max-height: 200px;">
-                    {% endif %}
-                </div>
                 
                 <button type="submit" class="btn btn-yellow w-100">Save Changes</button>
             </form>
