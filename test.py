@@ -5,7 +5,6 @@ from bson import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 import os
-import uuid
 from datetime import timedelta
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -35,10 +34,10 @@ ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'png'}
 
 # Allowed file extensions for attendance upload
 ATTENDANCE_ALLOWED_EXTENSIONS = {'xls', 'xlsx'}
-ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+MARK_ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def mark_allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in MARK_ALLOWED_EXTENSIONS
 
 def attendance_allowed_file(filename):
     """Checks if the uploaded file has a valid Excel extension."""
@@ -280,7 +279,7 @@ def upload_marksheet_page():
         mark_file = request.files.get('mark_file')
         
         # Validate the file format
-        if mark_file and allowed_file(mark_file.filename):
+        if mark_file and mark_allowed_file(mark_file.filename):
             try:
                 temp_dir = os.path.join(app.root_path, 'temp')
                 if not os.path.exists(temp_dir):
@@ -331,7 +330,9 @@ def upload_marksheet_page():
                     # Store the data in MongoDB
                     mongo.db.mark.insert_many(mark_records)
                     success_message = "Marks uploaded successfully."
+                    
                 os.remove(temp_path)
+                return redirect(url_for('student_dashboard'))
             
             except Exception as e:
                 error_message = f"Error uploading marks: {e}"
@@ -455,8 +456,14 @@ def edit_student(student_id):
         photo = request.files.get('photo')
         if photo and allowed_file(photo.filename):
             # Save the file in GridFS
-            photo_id = fs.put(photo, filename=photo.filename, content_type=photo.content_type)
-            update_data['photo_id'] = photo_id  # Store GridFS file ID in MongoDB
+            filename = secure_filename(photo.filename)
+            content_type = photo.content_type
+            try:
+                photo_id = fs.put(photo, filename=filename, content_type=content_type)
+                update_data['photo_id'] = photo_id  # Store GridFS file ID in MongoDB
+            except Exception as e:
+                flash(f"Error uploading photo: {e}", "error")
+                return redirect(request.url)
 
         try:
             # Update student details in the database
@@ -476,16 +483,17 @@ def edit_student(student_id):
 
     return render_template('edit_student.html', student=student)
 
-
-@app.route('/get_photo/<string:photo_id>')
+@app.route('/photo/<string:photo_id>')
 def get_photo(photo_id):
     try:
         # Retrieve the file from GridFS
-        file = fs.get(ObjectId(photo_id))
-        return file.read(), 200, {
-            'Content-Type': file.content_type,
-            'Content-Disposition': f'inline; filename="{file.filename}"'
-        }
+        photo = fs.get(ObjectId(photo_id))
+        return send_file(
+            photo,
+            mimetype=photo.content_type,
+            as_attachment=False,
+            download_name=photo.filename
+        )
     except Exception as e:
         return f"Error retrieving file: {e}", 404
     

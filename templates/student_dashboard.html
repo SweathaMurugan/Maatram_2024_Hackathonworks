@@ -93,12 +93,10 @@
 <body>
 
 <div class="container mt-5">
-    
-    {% if student.get('photo_path') %}
-        <img src="{{ url_for('get_photo', photo_id=student.photo_id) }}" alt="Student Photo" class="profile-photo img-fluid">
-    {% else %}
-        <p class="text-center">No photo uploaded.</p>
-    {% endif %}
+   
+    <img src="{{ url_for('get_photo', photo_id=student['photo_id'] | string) }}" alt="Student Photo">
+
+
 
     <h1>Welcome, {{ student['name'] }}</h1>
 
@@ -154,6 +152,7 @@
                 </div>
                 <div class="modal-body text-center">
                     <img src="{{ url_for('get_certificate', file_id=certificate['file_id']) }}" class="img-fluid" alt="Certificate Full View" style="max-height: 90vh; width: auto;">
+                    
                 </div>
             </div>
         </div>

@@ -77,11 +77,12 @@
 <body>
     <div class="container mt-5">
         <!-- Profile Photo -->
-        {% if student.get('photo_path') %}
-            <img src="{{ url_for('get_photo', photo_id=student.photo_id) }}" alt="Student Photo" class="profile-photo img-fluid">
-        {% else %}
-            <p class="text-center">No photo uploaded.</p>
-        {% endif %}
+        {% if student.photo_id %}
+        <img src="{{ url_for('get_photo', photo_id=student.photo_id) }}" alt="{{ student.name }}'s Photo" class="profile-photo">
+    {% else %}
+        <img src="{{ url_for('static', filename='default_profile.png') }}" alt="Default Photo" class="profile-photo">
+    {% endif %}
+    
 
         <h1>I'm, {{ student['name'] }}</h1>
 

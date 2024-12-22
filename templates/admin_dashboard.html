@@ -73,10 +73,12 @@
 <div class="container ">
     <h1 class="text-center mb-4">Admin Dashboard</h1>
 
-    
-    <!-- Upload Zoom Attendance Section -->
-    <a href="{{ url_for('upload_attendance') }}" class="btn btn-yellow px-4 mx-5">Upload Attendance</a>
-    <a href="{{ url_for('upload_marksheet_page') }}" class="btn btn-yellow px-4 mx-5">Upload Marksheet</a>
+    <div class="d-flex justify-content-around">
+
+        <!-- Upload Zoom Attendance Section -->
+        <a href="{{ url_for('upload_attendance') }}" class="btn btn-yellow px-4 mx-5">Upload Attendance</a>
+        <a href="{{ url_for('upload_marksheet_page') }}" class="btn btn-yellow px-4 mx-5">Upload Marksheet</a>
+    </div>
 
 
     <!-- Search Students Section -->
