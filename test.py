@@ -35,9 +35,16 @@ ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'png'}
 
 # Allowed file extensions for attendance upload
 ATTENDANCE_ALLOWED_EXTENSIONS = {'xls', 'xlsx'}
+ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def attendance_allowed_file(filename):
+    """Checks if the uploaded file has a valid Excel extension."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ATTENDANCE_ALLOWED_EXTENSIONS
+
+
 
 # Session timeout
 app.permanent_session_lifetime = timedelta(minutes=30)
@@ -158,26 +165,25 @@ def dashboard():
 
     flash("Invalid role. Please log in again.", "error")
     return redirect(url_for('login'))
-
 @app.route('/student_dashboard')
 def student_dashboard():
     if 'user_id' not in session or session.get('role') != 'Student':
         flash("Unauthorized access", "error")
         return redirect(url_for('login'))
-    
+
     student = mongo.db.students.find_one({'_id': ObjectId(session['user_id'])})
+    student_email = session.get('email')
+
     certificates = list(mongo.db.certificates.find({'student_id': session['user_id']}))
     meetings = list(mongo.db.meetings.find())
     notifications = list(mongo.db.notifications.find())
-    student_email = session.get('email')
+    
+    # Fetch marks
     marks_records = list(mongo.db.mark.find({'email': student['email']}))
-    # Fetch attendance records for the student
+
+    # Attendance, volunteer, and additional details
     attendance_records = list(mongo.db.attendance.find({'Student Email': student['email']}))
-
-    # Fetch volunteer details for the student
-    volunteer_details = list(mongo.db.volunteers.find({'student_id': session['user_id']}))
-
-    # Fetch additional details
+    volunteer_details = list(mongo.db.volunteers.find({"student_id": ObjectId(session['user_id'])}))
     mentor_name = student.get('mentor_name')
     anchor_name = student.get('anchor_name')
     father_name = student.get('father_name')
@@ -188,21 +194,15 @@ def student_dashboard():
     cgpa = student.get('cgpa')
     batch = student.get('batch')
 
-    # Convert MongoDB cursor to a list
-    for record in attendance_records:
-        record['_id'] = str(record['_id'])
-        record['Date'] = str(record['Date'])
-
-    #attendance_list = list(attendance_records)
     return render_template(
         'student_dashboard.html',
         student=student,
         certificates=certificates,
         meetings=meetings,
         notifications=notifications,
+        marks_records=marks_records,
         attendance_records=attendance_records,
         volunteer_details=volunteer_details,
-        marks_records=marks_records,
         mentor_name=mentor_name,
         anchor_name=anchor_name,
         father_name=father_name,
@@ -213,6 +213,7 @@ def student_dashboard():
         cgpa=cgpa,
         batch=batch
     )
+
 
 @app.route('/admin_dashboard', methods=['GET', 'POST'])
 @role_required('Admin')
@@ -265,7 +266,7 @@ def admin_dashboard():
         meetings=meetings,
         notifications=notifications
     )
-
+    
 @app.route('/upload_marksheet_page', methods=['GET', 'POST'])
 @role_required('Admin')
 def upload_marksheet_page():
@@ -378,7 +379,7 @@ def delete_notification(notification_id):
 @role_required('Admin')  # Ensure only Admin can access this route
 def view_student(student_id):
     # Fetch the student details using the provided student_id
-    student = mongo.db.students.find_one({"_id": ObjectId(session['user_id'])})
+    student = mongo.db.students.find_one({"_id": ObjectId(student_id)})
     
     if not student:
         flash('Student not found', 'error')
@@ -388,11 +389,13 @@ def view_student(student_id):
     certificates = list(mongo.db.certificates.find({'student_id': student_id}))
     student_email = session.get('email')
     # Fetch volunteer work for the student volunteer_details = list(mongo.db.volunteers.find({"student_email": student_email}))
-    volunteer_details = list(mongo.db.volunteers.find({"student_id": ObjectId(session['user_id'])}))
-    marks_records = list(mongo.db.mark.find({'email': student['email']}))
+    volunteer_details = list(mongo.db.volunteers.find({"student_id": ObjectId( student_id)}))
+        
     # Fetch attendance records for the student
-    attendance_records = list(mongo.db.attendance.find({'Student Email': student['email']}))
     # Fetch additional details
+    marks_records = list(mongo.db.mark.find({'email': student['email']}))
+    attendance_records = list(mongo.db.attendance.find({'Student Email': student['email']}))
+    
     mentor_name = student.get('mentor_name')
     anchor_name = student.get('anchor_name')
     father_name = student.get('father_name')
@@ -402,19 +405,15 @@ def view_student(student_id):
     college_name = student.get('college_name')
     cgpa = student.get('cgpa')
     batch = student.get('batch')
-    # Convert MongoDB cursor to a list
-    for record in attendance_records:
-        record['_id'] = str(record['_id'])
-        record['Date'] = str(record['Date'])
-
+    
     # Render the template
     return render_template(
         'view_student.html',
         student=student,
         certificates=certificates,
         attendance_records=attendance_records,
-        volunteer_details=volunteer_details,
         marks_records=marks_records,
+        volunteer_details=volunteer_details,
         mentor_name=mentor_name,
         anchor_name=anchor_name,
         father_name=father_name,
@@ -621,8 +620,9 @@ def delete_certificate(cert_id):
 
 @app.route('/certificate/<file_id>')
 def get_certificate(file_id):
+    file_id = ObjectId(file_id)
     # Fetch the certificate file from GridFS using the file_id
-    file = fs.get(ObjectId(file_id))
+    file = fs.get(file_id)
     return send_file(file, mimetype=file.content_type)
 
 # everything is okay below here we are adding the upload attendance routres and also we are adding some codes in student dashboard and admindashboard for attendace 
@@ -691,16 +691,38 @@ def upload_attendance():
 
     return render_template('upload_attendance.html', success_message=success_message, error_message=error_message)
 
-@app.route('/view_attendance', methods=['GET'])
-@role_required('Student')
-def view_attendance():
-    user_email = session.get('email')  # Ensure email is stored in the session upon login
-    if not user_email:
-        return redirect(url_for('login'))  # Redirect if not logged in
 
-    attendance_records = list(mongo.db.attendance.find({"Student Email": user_email}))
-    return render_template('view_attendance.html', attendance=attendance_records)
+@app.route('/update_volunteer/<volunteer_id>', methods=['GET', 'POST'])
+def update_volunteer(volunteer_id):
+    if 'user_id' not in session or session.get('role') != 'Student':
+        flash("Unauthorized access", "error")
+        return redirect(url_for('login'))
 
+    volunteer = mongo.db.volunteers.find_one({'_id': ObjectId(volunteer_id)})
+    
+    if not volunteer:
+        flash("Volunteer details not found", "error")
+        return redirect(url_for('student_dashboard'))
+
+    if request.method == 'POST':
+        volunteer_name = request.form['volunteer_name']
+        description = request.form['description']
+        hours_worked = float(request.form['hours_worked'])
+
+        mongo.db.volunteers.update_one(
+            {'_id': ObjectId(volunteer_id)},
+            {'$set': {
+                'volunteer_name': volunteer_name,
+                'description': description,
+                'hours_worked': hours_worked,
+                'date_uploaded': datetime.datetime.now()
+            }}
+        )
+        
+        flash("Volunteer work updated successfully", "success")
+        return redirect(url_for('student_dashboard'))
+
+    return render_template('update_volunteer.html', volunteer=volunteer)
 
 @app.route('/add_volunteer', methods=['GET', 'POST'])
 def add_volunteer():
